@@ -8,5 +8,6 @@ namespace SlutUppgiftBibliotek.Data
 {
     internal class DataAccess
     {
+
     }
 }
