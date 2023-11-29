@@ -10,7 +10,6 @@ namespace SlutUppgiftBibliotek.Models
     internal class Book
     {
         public int Id { get; set; }
-        [StringLength(13)]
         public bool IsAvailable { get; set; } = true;
         public string ISBN { get; set; }
         public string Title { get; set; }
@@ -18,5 +17,7 @@ namespace SlutUppgiftBibliotek.Models
         public int PublicationYear { get; set; }
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Rating { get; set; }
+        public DateTime? DateOfLoan { get; set; }
+        public DateTime? DateOfReturn { get; set; }
     }
 }

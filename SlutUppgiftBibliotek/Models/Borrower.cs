@@ -13,8 +13,7 @@ namespace SlutUppgiftBibliotek.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public LoanCard LoanCard { get; set; }
-        public DateTime? DateOfLoan { get; set; }
-        public DateTime? DateOfReturn { get; set; }
+
         public ICollection<Book> Books { get; set; } = new List<Book>();
     }
 }
