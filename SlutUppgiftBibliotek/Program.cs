@@ -1,12 +1,14 @@
 ﻿using ConsoleCompanion;
+using SlutUppgiftBibliotek.Data;
+
 namespace SlutUppgiftBibliotek
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            ConsoleCompanionHelper cc = new ConsoleCompanionHelper();
-            
+            DataAccess dataAccess = new DataAccess();
+            dataAccess.BorrowABook();
         }
     }
 }

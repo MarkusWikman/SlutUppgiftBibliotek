@@ -11,7 +11,6 @@ namespace SlutUppgiftBibliotek.Models
     internal class LoanCard
     {
         public int Id { get; set; }
-        [StringLength(4, ErrorMessage = "The property must be exactly 4 characters long.")]
         [EncryptColumn]
         public string Pin { get; set; }
         public Borrower Borrower { get; set; }
