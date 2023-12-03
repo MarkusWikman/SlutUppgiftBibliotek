@@ -55,7 +55,7 @@ namespace SlutUppgiftBibliotek.Data
             borrower.FirstName = cc.AskForString("Enter the first name of the borrower: ");
             borrower.LastName = cc.AskForString("Enter the last name of the borrower: ");
             LoanCard loanCard = new LoanCard();
-            loanCard.Pin = cc.AskForString("Please enter the password for your loancard: ");
+            loanCard.Pin = cc.AskForString("Please enter password for the loancard: ");
             borrower.LoanCard = loanCard;
             context.Borrowers.Add(borrower);
             context.LoanCards.Add(loanCard);
@@ -91,12 +91,41 @@ namespace SlutUppgiftBibliotek.Data
                 context.SaveChanges();
             }
         }
+        public Borrower ShowListOfBorrowersAndGetBorrower()
+        {
+            var l = context.Borrowers.ToList();
+            if (l.Count > 0)
+            {
+                for (int i = 0; i < l.Count; i++)
+                {
+                    Console.WriteLine($"Id:{l[i].Id}: {l[i].FirstName} {l[i].LastName}");
+                }
+                do
+                {
+                    Console.WriteLine("Please enter the Id of the borrower you wish to use:");
+                    int nr = int.Parse(Console.ReadLine());
+                    var b = l.Where(b => b.Id == nr).FirstOrDefault();
+                    if (b != null)
+                    {
+                        return b;
+                    }
+                    Console.WriteLine("You entered a non existing Id number, try again");
+                } while (true);
+            }
+            else return null;
+        }
         public Borrower GetBorrowerByFirstName(string firstName)
         {
             return context.Borrowers
                 .Include(borrower => borrower.Books)
                            .Where(borrower => borrower.FirstName == firstName)
                            .First();
+        }
+        public Book GetBookByTitle(string title)
+        {
+            return context.Books
+               .Where(book => book.Title == title)
+               .First();
         }
         public List<Book> GetBorrowerByFirstNamesBooks(string firstName)
         {
@@ -132,7 +161,7 @@ namespace SlutUppgiftBibliotek.Data
                         loanHistory.DateOfLoan = borrowersBooks[i].DateOfLoan;
                         loanHistory.DateOfReturn = DateTime.Now;
                         loanHistory.Borrower = borrower;
-                        loanHistory.Book = new Book(borrowersBooks[i]);
+                        loanHistory.Book = borrowersBooks[i];
                         context.LoanHistories.Add(loanHistory);
 
                         borrowersBooks[i].IsAvailable = true;
@@ -208,6 +237,15 @@ namespace SlutUppgiftBibliotek.Data
                 .Include(b => b.LoanHistory)
                 .ThenInclude(b => b.Book)
                 .Where(b => b.Equals(borrower))
+                .SelectMany(b => b.LoanHistory)
+                .ToList();
+        }
+        public List<LoanHistory> GetLoanHistoryOnBook(Book book)
+        {
+            return context.Books
+                .Include(b => b.LoanHistory)
+                .ThenInclude(b => b.Borrower)
+                .Where(b => b.Equals(book))
                 .SelectMany(b => b.LoanHistory)
                 .ToList();
         }
