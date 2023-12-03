@@ -1,4 +1,5 @@
 ﻿using ConsoleCompanion;
+using Microsoft.EntityFrameworkCore;
 using SlutUppgiftBibliotek.Models;
 
 namespace SlutUppgiftBibliotek.Data
@@ -9,13 +10,13 @@ namespace SlutUppgiftBibliotek.Data
         Context context = new Context();
         public void CreateStuffTest()
         {
-            Book book = new Book() { IsAvailable = false, DateOfLoan = new DateTime(2023, 11, 25), DateOfReturn = new DateTime(2023, 12, 25), PublicationYear = 1954, ISBN = "978-0-618-34625-0", Rating = 5, Title = "The Lord Of The Rings, The Fellowship Of The Ring", };
-            Author author = new Author() { FirstName = "John Ronald Reuel", LastName = "Tolkien" };
+            Book book = new Book() { IsAvailable = false, DateOfLoan = DateTime.Now, DateOfReturn = DateTime.Now.AddMonths(1), PublicationYear = 1954, ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter", };
+            Author author = new Author() { FirstName = "JK", LastName = "Rowling" };
             author.Books.Add(book);
             book.Authors.Add(author);
             context.Books.Add(book);
             context.Authors.Add(author);
-            Borrower borrower = new Borrower() { FirstName = "Markus", LastName = "Wikman" };
+            Borrower borrower = new Borrower() { FirstName = "Elizabeth", LastName = "Andersson" };
             borrower.Books.Add(book);
             context.Borrowers.Add(borrower);
             LoanCard card = new LoanCard() { Pin = "1234", Borrower = borrower };
@@ -47,7 +48,7 @@ namespace SlutUppgiftBibliotek.Data
             }
             return authorsList;
         }
-        public void CreateABorrowerAndCard()
+        public Borrower CreateABorrowerAndCard()
         {
             Borrower borrower = new Borrower();
             borrower.FirstName = cc.AskForString("Enter the first name of the borrower: ");
@@ -58,26 +59,43 @@ namespace SlutUppgiftBibliotek.Data
             context.Borrowers.Add(borrower);
             context.LoanCards.Add(loanCard);
             context.SaveChanges();
+            return borrower;
         }
         public void BorrowABook(Borrower borrower)
         {
             var availableBooks = context.Books.Where(b => b.IsAvailable == true).ToList();
-            Console.WriteLine("These are the available books in the library:");
-            for (int i = 0; i < availableBooks.Count(); i++)
+            if (availableBooks.Count < 1)
             {
-                Console.WriteLine($"{i}: {availableBooks[i].Title}");
+                Console.WriteLine("Unfortunately we have run out of books");
             }
-            int bookBorrowed = cc.AskForInt(0, availableBooks.Count, "Enter the number of the book you wanna borrow: ");
-            for (int i = 0; i < availableBooks.Count(); i++)
+            else
             {
-                if (i == bookBorrowed)
+                Console.WriteLine("These are the available books in the library:");
+                for (int i = 0; i < availableBooks.Count(); i++)
                 {
-                    availableBooks[i].IsAvailable = false;
-                    availableBooks[i].DateOfLoan = DateTime.Now;
-                    availableBooks[i].DateOfReturn = DateTime.Now.AddMonths(1);
-                    borrower.Books.Add(availableBooks[i]);
+                    Console.WriteLine($"{i}: {availableBooks[i].Title}");
                 }
+                int bookBorrowed = cc.AskForInt(0, availableBooks.Count, "Enter the number of the book you wanna borrow: ");
+                for (int i = 0; i < availableBooks.Count(); i++)
+                {
+                    if (i == bookBorrowed)
+                    {
+                        availableBooks[i].IsAvailable = false;
+                        availableBooks[i].DateOfLoan = DateTime.Now;
+                        availableBooks[i].DateOfReturn = DateTime.Now.AddMonths(1);
+                        borrower.Books.Add(availableBooks[i]);
+                    }
+                }
+                context.SaveChanges();
             }
+        }
+        public List<Book> GetBorrowerByFirstNamesBooks(string firstName)
+        {
+            return context.Borrowers
+                           .Include(borrower => borrower.Books)
+                           .Where(borrower => borrower.FirstName == firstName)
+                           .SelectMany(borrower => borrower.Books)
+                           .ToList();
         }
     }
 }

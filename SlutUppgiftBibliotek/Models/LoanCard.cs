@@ -14,5 +14,9 @@ namespace SlutUppgiftBibliotek.Models
         [EncryptColumn]
         public string Pin { get; set; }
         public Borrower Borrower { get; set; }
+        public LoanCard()
+        {
+            
+        }
     }
 }

@@ -19,5 +19,13 @@ namespace SlutUppgiftBibliotek.Models
         public int Rating { get; set; }
         public DateTime? DateOfLoan { get; set; }
         public DateTime? DateOfReturn { get; set; }
+        public override string ToString()
+        {
+            return Title;
+        }
+        public Book()
+        {
+            
+        }
     }
 }
