@@ -29,5 +29,15 @@ namespace SlutUppgiftBibliotek.Models
         {
             
         }
+        public Book(Book copy)
+        {
+            Title = copy.Title;
+            ISBN = copy.ISBN;
+            Rating = copy.Rating;
+            Authors = copy.Authors;
+            PublicationYear = copy.PublicationYear;
+            AmountOfTimesBorrowed = copy.AmountOfTimesBorrowed;
+            LoanHistory = copy.LoanHistory;
+        }
     }
 }

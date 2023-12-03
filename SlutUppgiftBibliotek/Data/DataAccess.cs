@@ -10,7 +10,7 @@ namespace SlutUppgiftBibliotek.Data
         Context context = new Context();
         public void CreateStuffTest()
         {
-            Book book = new Book() { IsAvailable = false, PublicationYear = 1954, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter",  };
+            Book book = new Book() { IsAvailable = false, PublicationYear = 1954, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter", };
             Author author = new Author() { FirstName = "JK", LastName = "Rowling" };
             author.Books.Add(book);
             book.Authors.Add(author);
@@ -132,7 +132,7 @@ namespace SlutUppgiftBibliotek.Data
                         loanHistory.DateOfLoan = borrowersBooks[i].DateOfLoan;
                         loanHistory.DateOfReturn = DateTime.Now;
                         loanHistory.Borrower = borrower;
-                        loanHistory.Book = borrowersBooks[i];
+                        loanHistory.Book = new Book(borrowersBooks[i]);
                         context.LoanHistories.Add(loanHistory);
 
                         borrowersBooks[i].IsAvailable = true;
@@ -201,6 +201,15 @@ namespace SlutUppgiftBibliotek.Data
                     }
                     break;
             }
+        }
+        public List<LoanHistory> GetLoanHistoryOnBorrower(Borrower borrower)
+        {
+            return context.Borrowers
+                .Include(b => b.LoanHistory)
+                .ThenInclude(b => b.Book)
+                .Where(b => b.Equals(borrower))
+                .SelectMany(b => b.LoanHistory)
+                .ToList();
         }
         public void UseWithCautionRemoveEverything()
         {
