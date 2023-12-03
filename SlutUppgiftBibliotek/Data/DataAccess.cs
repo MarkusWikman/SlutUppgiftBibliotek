@@ -36,18 +36,26 @@ namespace SlutUppgiftBibliotek.Data
         }
         public ICollection<Author> CreateAuthors()
         {
-            ICollection<Author> authorsList = new List<Author>();
-            int loops = cc.AskForInt("How many authors does the book have?: ");
-            for (int i = 0; i < loops; i++)
+            Console.WriteLine("Do you wish to use already existing author(s) in the DB? If your answer is yes press 1, otherwise press any button:");
+            if (int.Parse(Console.ReadLine()) == 1)
             {
-                Author author = new Author();
-                author.FirstName = cc.AskForString($"Enter the first name of author nr{i + 1}: ");
-                author.LastName = cc.AskForString($"Enter the last name of author nr{i + 1}: ");
-                authorsList.Add(author);
-                context.Authors.Add(author);
-                context.SaveChanges();
+                return ShowListOfAuthorsAndGetAuthor();
             }
-            return authorsList;
+            else
+            {
+                ICollection<Author> authorsList = new List<Author>();
+                int loops = cc.AskForInt("How many authors does the book have?: ");
+                for (int i = 0; i < loops; i++)
+                {
+                    Author author = new Author();
+                    author.FirstName = cc.AskForString($"Enter the first name of author nr{i + 1}: ");
+                    author.LastName = cc.AskForString($"Enter the last name of author nr{i + 1}: ");
+                    authorsList.Add(author);
+                    context.Authors.Add(author);
+                    context.SaveChanges();
+                }
+                return authorsList;
+            }
         }
         public Borrower CreateABorrowerAndCard()
         {
@@ -111,6 +119,36 @@ namespace SlutUppgiftBibliotek.Data
                     }
                     Console.WriteLine("You entered a non existing Id number, try again");
                 } while (true);
+            }
+            else return null;
+        }
+        public ICollection<Author> ShowListOfAuthorsAndGetAuthor()
+        {
+            var l = context.Authors.ToList();
+            if (l.Count > 0)
+            {
+                for (int i = 0; i < l.Count; i++)
+                {
+                    Console.WriteLine($"Id:{l[i].Id}: {l[i].FirstName} {l[i].LastName}");
+                }
+                int amountOfAuthors = cc.AskForInt(0, l.Count, "How many authors do you wish to use for this book?: ");
+                ICollection<Author> result = new List<Author>();
+                for (int i = 0; i < amountOfAuthors; i++)
+                {
+                    do
+                    {
+                        Console.WriteLine("Please enter the Id of the author you wish to use:");
+                        int nr = int.Parse(Console.ReadLine());
+                        var b = l.Where(b => b.Id == nr).FirstOrDefault();
+                        if (b != null)
+                        {
+                            result.Add(b);
+                            continue;
+                        }
+                        Console.WriteLine("You entered a non existing Id number, try again");
+                    } while (true);
+                }
+                return result;
             }
             else return null;
         }
