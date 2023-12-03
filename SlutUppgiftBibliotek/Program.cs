@@ -14,12 +14,8 @@ namespace SlutUppgiftBibliotek
             //var borrowersBooks = borrower.Books.ToList();
 
             //dataAccess.CreateStuffTest();
+            dataAccess.UseWithCautionRemoveEverything();
 
-            var b = dataAccess.GetBorrowerByFirstNamesBooks("Elizabeth");
-            for (int i = 0; i < b.Count; i++)
-            {
-                Console.WriteLine(b[i].Title);
-            }
         }
     }
 }
