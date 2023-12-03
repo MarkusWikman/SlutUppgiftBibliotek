@@ -17,8 +17,10 @@ namespace SlutUppgiftBibliotek.Models
         public int PublicationYear { get; set; }
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Rating { get; set; }
+        public int AmountOfTimesBorrowed { get; set; }
+        public ICollection<LoanHistory> LoanHistory { get; set; } = new List<LoanHistory>();
         public DateTime? DateOfLoan { get; set; }
-        public DateTime? DateOfReturn { get; set; }
+        public DateTime? PlannedDateOfReturn { get; set; }
         public override string ToString()
         {
             return Title;

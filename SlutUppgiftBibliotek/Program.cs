@@ -9,13 +9,12 @@ namespace SlutUppgiftBibliotek
         static void Main(string[] args)
         {
             DataAccess dataAccess = new DataAccess();
-            //Borrower borrower = dataAccess.CreateABorrowerAndCard();
-            //dataAccess.BorrowABook(borrower);
-            //var borrowersBooks = borrower.Books.ToList();
+            //dataAccess.UseWithCautionRemoveEverything();
 
-            //dataAccess.CreateStuffTest();
-            dataAccess.UseWithCautionRemoveEverything();
+            dataAccess.CreateStuffTest();
 
+            //var s = dataAccess.GetBorrowerByFirstName("Elizabeth");
+            //dataAccess.ReturnABook(s);
         }
     }
 }

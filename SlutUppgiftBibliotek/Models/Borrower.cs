@@ -14,6 +14,7 @@ namespace SlutUppgiftBibliotek.Models
         public string LastName { get; set; }
         public LoanCard LoanCard { get; set; }
         public ICollection<Book> Books { get; set; } = new List<Book>();
+        public ICollection<LoanHistory> LoanHistory { get; set; } = new List<LoanHistory>();
         public Borrower()
         {
             

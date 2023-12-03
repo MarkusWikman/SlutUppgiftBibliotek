@@ -10,10 +10,11 @@ namespace SlutUppgiftBibliotek.Data
         Context context = new Context();
         public void CreateStuffTest()
         {
-            Book book = new Book() { IsAvailable = false, DateOfLoan = DateTime.Now, DateOfReturn = DateTime.Now.AddMonths(1), PublicationYear = 1954, ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter", };
+            Book book = new Book() { IsAvailable = false, PublicationYear = 1954, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter",  };
             Author author = new Author() { FirstName = "JK", LastName = "Rowling" };
             author.Books.Add(book);
             book.Authors.Add(author);
+            book.AmountOfTimesBorrowed++;
             context.Books.Add(book);
             context.Authors.Add(author);
             Borrower borrower = new Borrower() { FirstName = "Elizabeth", LastName = "Andersson" };
@@ -80,9 +81,10 @@ namespace SlutUppgiftBibliotek.Data
                 {
                     if (i == bookBorrowed)
                     {
+                        availableBooks[i].AmountOfTimesBorrowed++;
                         availableBooks[i].IsAvailable = false;
                         availableBooks[i].DateOfLoan = DateTime.Now;
-                        availableBooks[i].DateOfReturn = DateTime.Now.AddMonths(1);
+                        availableBooks[i].PlannedDateOfReturn = DateTime.Now.AddMonths(1);
                         borrower.Books.Add(availableBooks[i]);
                     }
                 }
@@ -121,14 +123,21 @@ namespace SlutUppgiftBibliotek.Data
                 {
                     Console.WriteLine($"{i}: {borrowersBooks[i].Title}");
                 }
-                int bookToReturn = cc.AskForInt(0, borrowersBooks.Count, "Enter the number of the book you wanna return: ");
+                int bookToReturn = cc.AskForInt(0, borrowersBooks.Count - 1, "Enter the number of the book you wanna return: ");
                 for (int i = 0; i < borrowersBooks.Count(); i++)
                 {
                     if (i == bookToReturn)
                     {
+                        LoanHistory loanHistory = new LoanHistory();
+                        loanHistory.DateOfLoan = borrowersBooks[i].DateOfLoan;
+                        loanHistory.DateOfReturn = DateTime.Now;
+                        loanHistory.Borrower = borrower;
+                        loanHistory.Book = borrowersBooks[i];
+                        context.LoanHistories.Add(loanHistory);
+
                         borrowersBooks[i].IsAvailable = true;
                         borrowersBooks[i].DateOfLoan = null;
-                        borrowersBooks[i].DateOfReturn = null;
+                        borrowersBooks[i].PlannedDateOfReturn = null;
                         borrower.Books.Remove(borrowersBooks[i]);
                     }
                 }
@@ -206,6 +215,9 @@ namespace SlutUppgiftBibliotek.Data
 
             var allLoanCards = context.LoanCards.ToList();
             context.LoanCards.RemoveRange(allLoanCards);
+
+            var allLoanHistories = context.LoanHistories.ToList();
+            context.LoanHistories.RemoveRange(allLoanHistories);
 
             context.SaveChanges();
         }

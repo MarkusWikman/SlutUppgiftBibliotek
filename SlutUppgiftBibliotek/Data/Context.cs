@@ -12,6 +12,8 @@ namespace SlutUppgiftBibliotek.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<Borrower> Borrowers { get; set; }
         public DbSet<LoanCard> LoanCards { get; set; }
+        public DbSet<LoanHistory> LoanHistories { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

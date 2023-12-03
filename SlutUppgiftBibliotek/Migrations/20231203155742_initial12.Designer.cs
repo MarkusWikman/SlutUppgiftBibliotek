@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SlutUppgiftBibliotek.Data;
 
@@ -11,9 +12,11 @@ using SlutUppgiftBibliotek.Data;
 namespace SlutUppgiftBibliotek.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231203155742_initial12")]
+    partial class initial12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,15 +78,15 @@ namespace SlutUppgiftBibliotek.Migrations
                     b.Property<DateTime?>("DateOfLoan")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateOfReturn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ISBN")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("PlannedDateOfReturn")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("PublicationYear")
                         .HasColumnType("int");
