@@ -11,17 +11,70 @@ namespace SlutUppgiftBibliotek.Data
         public void CreateStuffTest()
         {
             Book book = new Book() { IsAvailable = false, PublicationYear = 1954, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter", };
+            Book book2 = new Book() { IsAvailable = false, PublicationYear = 2022, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "918-0-029-9310-0", Rating = 3, Title = "Programmers guide to the galaxy", };
+            Book book3 = new Book() { IsAvailable = false, PublicationYear = 2010, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "291-0-079-1298-1", Rating = 1, Title = "How women work", };
+            Book book4 = new Book() { IsAvailable = true, PublicationYear = 1990, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "918-0-213-0293-4", Rating = 5, Title = "The Alchemist", };
+            Book book5 = new Book() { IsAvailable = true, PublicationYear = 2010, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "929-0-079-1298-8", Rating = 5, Title = "1984", };
+
             Author author = new Author() { FirstName = "JK", LastName = "Rowling" };
+            Author author2 = new Author() { FirstName = "Markus", LastName = "Wikman" };
+            Author author3 = new Author() { FirstName = "Lucas", LastName = "Bergström" };
+            Author author4 = new Author() { FirstName = "Paulo", LastName = "Coelho" };
+            Author author5 = new Author() { FirstName = "George", LastName = "Orwell" };
+
             author.Books.Add(book);
+            author2.Books.Add(book2);
+            author3.Books.Add(book3);
+            author4.Books.Add(book3); // Visa exempel på att en bok kan ha fler författare
+            author4.Books.Add(book4);
+            author5.Books.Add(book5);
+
             book.Authors.Add(author);
+            book2.Authors.Add(author2);
+            book3.Authors.Add(author3);
+            book3.Authors.Add(author4);
+            book4.Authors.Add(author4);
+            book5.Authors.Add(author5);
+
             book.AmountOfTimesBorrowed++;
+            book2.AmountOfTimesBorrowed++;
+            book3.AmountOfTimesBorrowed++;
+
             context.Books.Add(book);
+            context.Books.Add(book2);
+            context.Books.Add(book3);
+            context.Books.Add(book4);
+            context.Books.Add(book5);
+
             context.Authors.Add(author);
+            context.Authors.Add(author2);
+            context.Authors.Add(author3);
+            context.Authors.Add(author4);
+            context.Authors.Add(author5);
+
             Borrower borrower = new Borrower() { FirstName = "Elizabeth", LastName = "Andersson" };
             borrower.Books.Add(book);
+            Borrower borrower2 = new Borrower() { FirstName = "Jens", LastName = "Palmqvist" };
+            borrower2.Books.Add(book2);
+            Borrower borrower3 = new Borrower() { FirstName = "Hoger", LastName = "Najmadin" };
+            borrower3.Books.Add(book3);
+            Borrower borrower4 = new Borrower() { FirstName = "Eva", LastName = "Andersson" };
+
             context.Borrowers.Add(borrower);
+            context.Borrowers.Add(borrower2);
+            context.Borrowers.Add(borrower3);
+            context.Borrowers.Add(borrower4);
+
             LoanCard card = new LoanCard() { Pin = "1234", Borrower = borrower };
+            LoanCard card2 = new LoanCard() { Pin = "4321", Borrower = borrower2 };
+            LoanCard card3 = new LoanCard() { Pin = "1998", Borrower = borrower3 };
+            LoanCard card4 = new LoanCard() { Pin = "2005", Borrower = borrower4 };
+
             context.LoanCards.Add(card);
+            context.LoanCards.Add(card2);
+            context.LoanCards.Add(card3);
+            context.LoanCards.Add(card4);
+
             context.SaveChanges();
         }
         public void CreateABook()
@@ -34,14 +87,20 @@ namespace SlutUppgiftBibliotek.Data
             context.Books.Add(book);
             context.SaveChanges();
         }
+        public void CreateAuthorsForMenuChoiceTwo()
+        {
+            Author author = new Author();
+            author.FirstName = cc.AskForString($"Enter the first name of author: ");
+            author.LastName = cc.AskForString($"Enter the last name of author: ");
+            context.Authors.Add(author);
+            context.SaveChanges();
+            Console.WriteLine("Author has been created and added to database");
+            Console.ReadLine();
+        }
         public ICollection<Author> CreateAuthors()
         {
             Console.WriteLine("Do you wish to use already existing author(s) in the DB? If your answer is yes press 1, otherwise press any button:");
-            if (int.Parse(Console.ReadLine()) == 1)
-            {
-                return ShowListOfAuthorsAndGetAuthor();
-            }
-            else
+            if (int.Parse(Console.ReadLine()) != 1)
             {
                 ICollection<Author> authorsList = new List<Author>();
                 int loops = cc.AskForInt("How many authors does the book have?: ");
@@ -55,6 +114,10 @@ namespace SlutUppgiftBibliotek.Data
                     context.SaveChanges();
                 }
                 return authorsList;
+            }
+            else
+            {
+                return ShowListOfAuthorsAndGetAuthor();
             }
         }
         public Borrower CreateABorrowerAndCard()
@@ -122,31 +185,50 @@ namespace SlutUppgiftBibliotek.Data
             }
             else return null;
         }
+        public Book ShowListOfBooksAndGetBook()
+        {
+            var l = context.Books.ToList();
+            if (l.Count > 0)
+            {
+                for (int i = 0; i < l.Count; i++)
+                {
+                    Console.WriteLine($"Id:{l[i].Id}: {l[i].Title}");
+                }
+                do
+                {
+                    Console.WriteLine("Please enter the Id of the book you wish to use:");
+                    int nr = int.Parse(Console.ReadLine());
+                    var b = l.Where(b => b.Id == nr).FirstOrDefault();
+                    if (b != null)
+                    {
+                        return b;
+                    }
+                    Console.WriteLine("You entered a non existing Id number, try again");
+                } while (true);
+            }
+            return null;
+        }
         public ICollection<Author> ShowListOfAuthorsAndGetAuthor()
         {
             var l = context.Authors.ToList();
             if (l.Count > 0)
             {
+                int amountOfAuthors = cc.AskForInt(0, l.Count, "How many authors do you wish to use for this book?: ");
                 for (int i = 0; i < l.Count; i++)
                 {
                     Console.WriteLine($"Id:{l[i].Id}: {l[i].FirstName} {l[i].LastName}");
                 }
-                int amountOfAuthors = cc.AskForInt(0, l.Count, "How many authors do you wish to use for this book?: ");
                 ICollection<Author> result = new List<Author>();
                 for (int i = 0; i < amountOfAuthors; i++)
                 {
-                    do
+                    Console.WriteLine("Please enter the Id of the author you wish to use:");
+                    int nr = int.Parse(Console.ReadLine());
+                    var b = l.Where(b => b.Id == nr).FirstOrDefault();
+                    if (b != null)
                     {
-                        Console.WriteLine("Please enter the Id of the author you wish to use:");
-                        int nr = int.Parse(Console.ReadLine());
-                        var b = l.Where(b => b.Id == nr).FirstOrDefault();
-                        if (b != null)
-                        {
-                            result.Add(b);
-                            continue;
-                        }
-                        Console.WriteLine("You entered a non existing Id number, try again");
-                    } while (true);
+                        result.Add(b);
+                        continue;
+                    }
                 }
                 return result;
             }
@@ -271,21 +353,20 @@ namespace SlutUppgiftBibliotek.Data
         }
         public List<LoanHistory> GetLoanHistoryOnBorrower(Borrower borrower)
         {
-            return context.Borrowers
-                .Include(b => b.LoanHistory)
-                .ThenInclude(b => b.Book)
-                .Where(b => b.Equals(borrower))
-                .SelectMany(b => b.LoanHistory)
-                .ToList();
+            var loanHistories = context.LoanHistories
+               .Where(l => l.BorrowerId == borrower.Id)
+               .Include(l => l.Book)
+               .ToList();
+            return loanHistories;
         }
+
         public List<LoanHistory> GetLoanHistoryOnBook(Book book)
         {
-            return context.Books
-                .Include(b => b.LoanHistory)
-                .ThenInclude(b => b.Borrower)
-                .Where(b => b.Equals(book))
-                .SelectMany(b => b.LoanHistory)
-                .ToList();
+            var loanHistories = context.LoanHistories
+               .Where(l => l.BookId == book.Id)
+               .Include(l => l.Borrower)
+               .ToList();
+            return loanHistories;
         }
         public void UseWithCautionRemoveEverything()
         {
