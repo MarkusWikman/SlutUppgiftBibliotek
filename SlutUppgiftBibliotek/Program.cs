@@ -12,8 +12,10 @@ namespace SlutUppgiftBibliotek
         {
             Console.OutputEncoding = Encoding.UTF8;
 
-            //dataAccess.SeedingMethod();
+            dataAccess.SeedingMethod();
             ShowMenu();
+
+            //This method will remove everything from the DB
             //dataAccess.UseWithCautionRemoveAllDataFromDB();
         }
         static void ShowMenu()
