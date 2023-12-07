@@ -8,7 +8,7 @@ namespace SlutUppgiftBibliotek.Data
     {
         ConsoleCompanionHelper cc = new ConsoleCompanionHelper();
         Context context = new Context();
-        public void CreateStuffTest()
+        public void SeedingMethod()
         {
             Book book = new Book() { IsAvailable = false, PublicationYear = 1954, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "978-0-618-34625-0", Rating = 5, Title = "Harry Potter", };
             Book book2 = new Book() { IsAvailable = false, PublicationYear = 2022, DateOfLoan = DateTime.Now, PlannedDateOfReturn = DateTime.Now.AddMonths(1), ISBN = "918-0-029-9310-0", Rating = 3, Title = "Programmers guide to the galaxy", };
@@ -25,7 +25,7 @@ namespace SlutUppgiftBibliotek.Data
             author.Books.Add(book);
             author2.Books.Add(book2);
             author3.Books.Add(book3);
-            author4.Books.Add(book3); // Visa exempel på att en bok kan ha fler författare
+            author4.Books.Add(book3);
             author4.Books.Add(book4);
             author5.Books.Add(book5);
 
@@ -267,7 +267,7 @@ namespace SlutUppgiftBibliotek.Data
             }
             else
             {
-                Console.WriteLine("These are your books:");
+                Console.WriteLine("These are the borrowers books:");
                 for (int i = 0; i < borrowersBooks.Count(); i++)
                 {
                     Console.WriteLine($"{i}: {borrowersBooks[i].Title}");
@@ -359,7 +359,6 @@ namespace SlutUppgiftBibliotek.Data
                .ToList();
             return loanHistories;
         }
-
         public List<LoanHistory> GetLoanHistoryOnBook(Book book)
         {
             var loanHistories = context.LoanHistories
@@ -368,7 +367,7 @@ namespace SlutUppgiftBibliotek.Data
                .ToList();
             return loanHistories;
         }
-        public void UseWithCautionRemoveEverything()
+        public void UseWithCautionRemoveAllDataFromDB()
         {
             var allAuthors = context.Authors.ToList();
             context.Authors.RemoveRange(allAuthors);
